@@ -4,7 +4,7 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 RUN apt-get install -y make gcc g++ git python libssl-dev
 
 RUN apt-get update && apt-get install -y \
-    python-software-properties \
+    # python-software-properties \
     software-properties-common
 
 # Install R repo
