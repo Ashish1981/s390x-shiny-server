@@ -1,8 +1,10 @@
 FROM ashish1981/s390x-rbase-rjava-rplumber
 #
+ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
-RUN apt-get install -y make gcc g++ git python libssl-dev
 
+RUN apt-get install -y make gcc g++ git python libssl-dev
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 100 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 RUN apt-get update && apt-get install -y \
     # python-software-properties \
     software-properties-common
@@ -29,7 +31,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
 RUN cd /tmp \
     && wget https://github.com/rstudio/shiny-server/archive/v1.5.14.948.tar.gz \
     && tar xzf v1.5.14.948.tar.gz \
-    && cd v1.5.14.948 \
+    && cd shiny-server-1.5.14.948 \
     && cd shiny-server \
     && mkdir -p tmp \
     && cd tmp \
@@ -37,7 +39,7 @@ RUN cd /tmp \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
     && make \
     && mkdir ../build \
-    && npm install \
+    && cd .. && npm install \
     && make install  \
     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
     && useradd -r -m shiny \
