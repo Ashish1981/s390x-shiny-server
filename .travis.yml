@@ -14,14 +14,13 @@ services:
 # - chmod +x ./kubectl
 # - sudo mv ./kubectl /usr/local/bin/kubectl
 script: echo 'Building Docker image with tags'
-after_success:
+before_deploy:
 - export DEPLOY_TIMESTAMP=`date +'%Y%m%d-%H%M%S'`
 - export git_repo=$(echo $TRAVIS_REPO_SLUG |  awk -F"/" '{print tolower($2)}')
 # - export icp_name="$git_repo"-icp
 - docker build -t $git_repo -f Dockerfile .
 - docker tag  $git_repo "$DOCKER_USERNAME"/$git_repo:$TRAVIS_BRANCH-$DEPLOY_TIMESTAMP-$TRAVIS_BUILD_NUMBER
 - docker tag  $git_repo "$DOCKER_USERNAME"/$git_repo:latest
-before_deploy:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 deploy:
   provider: script

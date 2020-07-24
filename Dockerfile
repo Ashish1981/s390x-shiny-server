@@ -1,7 +1,8 @@
 FROM ashish1981/s390x-rbase-rjava-rplumber
 #
 # Install build prerequisites
-RUN apt-get install -y make gcc g++ git python libssl-dev cmake
+RUN apt-get install -y make gcc g++ git python libssl-dev
+
 RUN apt-get update && apt-get install -y \
     python-software-properties \
     software-properties-common
