@@ -1,0 +1,49 @@
+arch: s390x
+services:
+- docker
+# before_install:
+# - echo -e "machine github.ibm.com\n  login $GITHUB_TOKEN" > ~/.netrc
+# - git lfs pull
+# before_script:
+# - echo "Install IBM Cloud CLI"
+# - curl -sL https://ibm.biz/idt-installer | bash
+# - ibmcloud plugin update container-service
+# - ibmcloud plugin update container-registry
+# - echo "Install kubectl"
+# - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+# - chmod +x ./kubectl
+# - sudo mv ./kubectl /usr/local/bin/kubectl
+script: echo 'Building Docker image with tags'
+after_success:
+- export DEPLOY_TIMESTAMP=`date +'%Y%m%d-%H%M%S'`
+- export git_repo=$(echo $TRAVIS_REPO_SLUG |  awk -F"/" '{print tolower($2)}')
+# - export icp_name="$git_repo"-icp
+- docker build -t $git_repo -f Dockerfile .
+- docker tag  $git_repo "$DOCKER_USERNAME"/$git_repo:$TRAVIS_BRANCH-$DEPLOY_TIMESTAMP-$TRAVIS_BUILD_NUMBER
+- docker tag  $git_repo "$DOCKER_USERNAME"/$git_repo:latest
+before_deploy:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: chmod +x ./scripts/* && ./scripts/deploy-r.sh
+  on:
+    branch: master
+# after_deploy:
+# - NODEPORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services "$git_repo"-node)
+# - NODES=$(kubectl get nodes -o jsonpath='{ $.items[*].status.addresses[?(@.type=="ExternalIP")].address}')
+# - export url=http://"$NODES":"$NODEPORT"
+# - export short_url=$(curl -s http://tinyurl.com/api-create.php?url=${url})
+# - echo ${short_url}
+notifications:
+  slack:
+    rooms:
+      - secure: KqHxUJMgoq6772f4jJPcnnGJwVZTd5PoLJ/QYv5dopeYZMUdWXRsLLiuLyZ5c3lHqUBcfyWjSOhFQISOavMU79LCer933MdcpsP+sasVR0y/5Cg+0x8uwdD9WpIdFgkW8VfvrxNyVi+u3g/0HhYDUWhQbzGUvLuX6ZpGolQTyUlCUElkziDeoLeRsIqUCuSwdAKIxLXCRg6umtU/kWqx5xYDHpgniuMpnH8c2nhx1WZzvk+lMG/g8LgzN+THHvLwjwf6N68pUZ2g4HOdXe2+TAf0lOjJ9GjsdVnabnHLLSXmbrs7ILgx6beUqsgd/FIG0p1Tub8to5vyweoh7T3Q6day1qukSFRlje87xWvohHuXLTFtIacbc780+IpBl6bKMv2L4hrfkYJsNhFv8L/bs/J9P60eRJWHMzV6cbUJn6dmWu2GYbBCGqyDPrlcZsY9sfFXOE0ddID3/YAa8h7x9oIupv9vOxxQMbBzVwnHMqytyWedaNRuWLkQnIwaX6DM3br9cdpE9A8fPBebAyueYdSkaVj5Y0nwmXszOwemr2nqVG2SpgdaM7LoGn0trbkiMjDumAEEmoIhaM+u+X97IcxNaRD5Zm+8F7eaeMXpogJLhokPQsVIljVNd8kH5FPSnCacmQei/PFQdvnmp3isEg/RXNwSh+9CIScWT0hCI3A= 
+    template:
+      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}  :greatsuccess: :success-7318:"
+        # - "Build <%{short_url}> <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_slug}@%{branch} in PR <%{pull_request_url}|#%{pull_request_number}> by %{author} %{result} in %{duration} "
+    on_success: always # default: always. never, change also be used
+    on_failure: never  # default: always
+    on_start:   change # default: never
+    on_cancel:  always # default: always
+    on_error:   always  # default: always
