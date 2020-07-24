@@ -3,7 +3,7 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
-RUN apt-get install -y make gcc g++ git python libssl-dev
+RUN apt-get install -y make gcc g++ git python libssl-dev 
 
 # Install R repo
 
@@ -22,7 +22,16 @@ RUN rm -rf /tmp/* \
     && rm -rf /tmp/*
 
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && apt-get install -y npm node-gyp \
+    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
+
+RUN mkdir ~/.npm-global \
+    && npm config set prefix '~/.npm-global' \
+    && echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.profile \
+    && source ~/.profile \
+    && npm completion >> ~/.bashrc \
+    && npm install -g npm 
 
 RUN cd  \
     && wget https://github.com/rstudio/shiny-server/archive/v1.5.14.948.tar.gz \
