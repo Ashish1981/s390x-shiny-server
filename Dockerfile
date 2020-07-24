@@ -3,7 +3,7 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
-RUN apt-get install -y make gcc g++ git python libssl-dev software-properties-common
+RUN apt-get install -y make gcc g++ git python libssl-dev
 
 # Install R repo
 
