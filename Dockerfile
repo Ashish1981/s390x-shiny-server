@@ -3,7 +3,7 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
-RUN apt-get install -y make gcc g++ git python libssl-dev linux-libc-dev-s390x-cross
+RUN apt-get install -y make gcc g++ git python libssl-dev 
 
 # Install R repo
 
@@ -42,7 +42,7 @@ RUN cd  \
     && cd shiny-server \
     && mkdir -p tmp 
 
-ADD install-node.sh ~/shiny-server/external/node/install-node.sh
+COPY install-node.sh ~/shiny-server/external/node/install-node.sh
 
 RUN cd ~/shiny-server/tmp   \
     && ../external/node/install-node.sh \
