@@ -21,9 +21,11 @@ RUN rm -rf /tmp/* \
     && make install  \
     && rm -rf /tmp/*
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y nodejs \
-    && apt-get install -y npm node-gyp \
+    && apt-get install -y npm \
+    && npm config set python /usr/bin/python2.7 \
+    && apt-get install -y node-gyp \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
 
 RUN mkdir ~/.npm-global \
@@ -34,19 +36,22 @@ RUN mkdir ~/.npm-global \
     && npm install -g npm 
 
 RUN cd  \
-    && wget https://github.com/rstudio/shiny-server/archive/v1.5.14.948.tar.gz \
+    && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
     && tar xzf v1.5.14.948.tar.gz \
     && mv shiny-server-1.5.14.948 shiny-server \
     && cd shiny-server \
-    && mkdir -p tmp \
-    && cd tmp \
+    && mkdir -p tmp 
+
+ADD install-node.sh ~/shiny-server/external/node/install-node.sh
+
+RUN cd ~/shiny-server/tmp   \
     && ../external/node/install-node.sh \
-    # && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
+    && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
     && make \
     && mkdir ../build \
     && (cd .. && npm install) \
-    # && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
+    && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
     && make install  \
     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
     && useradd -r -m shiny \
