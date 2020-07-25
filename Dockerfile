@@ -38,7 +38,7 @@ RUN mkdir ~/.npm-global \
 RUN cd  \
     && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
     && tar xzf v1.5.12.933.tar.gz \
-    && mv shiny-server-v1.5.12.933 shiny-server \
+    && mv shiny-server-1.5.12.933 shiny-server \
     && cd shiny-server \
     && mkdir -p tmp 
 
