@@ -51,7 +51,7 @@ download_node () {
   rm "${NODE_ARCHIVE_DEST}"
   cp /usr/bin/node ext/node/bin/node
   cp ext/node/bin/node ext/node/bin/shiny-server
-  rm ext/node/bin/npm
+  # rm ext/node/bin/npm
   (cd ext/node/lib/node_modules/npm && ./scripts/relocate.sh)
 }
 

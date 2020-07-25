@@ -42,15 +42,19 @@ RUN cd  \
     && cd shiny-server \
     && mkdir -p tmp 
 
-COPY install-node.sh ~/shiny-server/external/node/install-node.sh
+COPY install-node.sh /home/root/shiny-server/external/node/
 
 RUN cd ~/shiny-server/tmp   \
     && ../external/node/install-node.sh \
     && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
     && make \
-    && mkdir ../build \
-    && (cd .. && npm install) \
+    && mkdir ../build 
+
+RUN cd ~/shiny-server/tmp   \    
+    && (cd .. && npm install) 
+
+RUN cd ~/shiny-server/tmp   \    
     && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
     && make install  \
     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
