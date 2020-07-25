@@ -3,7 +3,7 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
-RUN apt-get install -y make gcc g++ git python libssl-dev 
+RUN apt-get install -y make gcc g++ git python libssl-dev linux-libc-dev-s390x-cross
 
 # Install R repo
 
@@ -37,8 +37,8 @@ RUN mkdir ~/.npm-global \
 
 RUN cd  \
     && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
-    && tar xzf v1.5.14.948.tar.gz \
-    && mv shiny-server-1.5.14.948 shiny-server \
+    && tar xzf v1.5.12.933.tar.gz \
+    && mv shiny-server-v1.5.12.933 shiny-server \
     && cd shiny-server \
     && mkdir -p tmp 
 
