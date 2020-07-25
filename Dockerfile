@@ -35,7 +35,7 @@ RUN mkdir ~/.npm-global \
     && npm completion >> ~/.bashrc \
     && npm install -g npm 
 
-RUN cd  \
+RUN cd ~/ \
     && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
     && tar xzf v1.5.12.933.tar.gz \
     && mv shiny-server-1.5.12.933 shiny-server \
@@ -51,7 +51,7 @@ RUN cd ~/shiny-server/tmp   \
     && make \
     && mkdir ../build 
 
-RUN cd ~/shiny-server/tmp   \    
+RUN cd ~/shiny-server/tmp \    
     && (cd .. && npm install) 
 
 RUN cd ~/shiny-server/tmp   \    
