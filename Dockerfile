@@ -62,7 +62,7 @@ RUN cd ~/shiny-server/tmp   \
     && mkdir -p /var/log/shiny-server \
     && mkdir -p /srv/shiny-server \
     && mkdir -p /var/lib/shiny-server \
-    && chown shiny /var/log/shiny-server \
+    # && chown shiny /var/log/shiny-server \
     && mkdir -p /etc/shiny-server \
     && cp ../config/default.config /etc/shiny-server/shiny-server.conf \
     && rm -rf /tmp/*
