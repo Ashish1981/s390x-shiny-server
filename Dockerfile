@@ -4,13 +4,6 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
 ################################################################################################
-ARG user=shiny
-ARG group=shiny
-ARG uid=1000
-ARG gid=1000
-ARG SHINY_HOME=/var/log/supervisord
-
-ENV SHINY_HOME $SHINY_HOME
 
 
 RUN apt-get install -y make gcc g++ git python libssl-dev 
@@ -78,12 +71,8 @@ RUN cd ~/shiny-server/tmp   \
     && mkdir -p /var/log/shiny-server \
     && mkdir -p /var/log/supervisord \
     && mkdir -p /srv/shiny-server \
-    && mkdir -p /var/lib/shiny-server \
+    # && mkdir -p /var/lib/shiny-server \
     # && chown shiny /var/log/shiny-server \
     && mkdir -p /etc/shiny-server \
     && cp ../config/default.config /etc/shiny-server/shiny-server.conf \
     && rm -rf /tmp/*
-
-RUN chown ${uid}:${gid} $SHINY_HOME \
-    && groupadd -g ${gid} ${group} \
-    && useradd -d "$SHINY_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
