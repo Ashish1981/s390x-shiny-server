@@ -3,6 +3,16 @@ FROM ashish1981/s390x-rbase-rjava-rplumber
 ENV DEBIAN_FRONTEND noninteractive
 # Install build prerequisites
 
+################################################################################################
+ARG user=shiny
+ARG group=shiny
+ARG uid=1000
+ARG gid=1000
+ARG SHINY_HOME=/var/log/supervisord
+
+ENV SHINY_HOME $SHINY_HOME
+
+
 RUN apt-get install -y make gcc g++ git python libssl-dev 
 
 # Install R repo
@@ -35,10 +45,16 @@ RUN mkdir ~/.npm-global \
     && npm completion >> ~/.bashrc \
     && npm install -g npm 
 
+# RUN cd ~/ \
+#     && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
+#     && tar xzf v1.5.12.933.tar.gz \
+#     && mv shiny-server-1.5.12.933 shiny-server \
+#     && cd shiny-server \
+#     && mkdir -p tmp 
 RUN cd ~/ \
-    && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
-    && tar xzf v1.5.12.933.tar.gz \
-    && mv shiny-server-1.5.12.933 shiny-server \
+    && wget https://github.com/rstudio/shiny-server/archive/v1.5.9.923.tar.gz \
+    && tar xzf v1.5.9.923.tar.gz \
+    && mv shiny-server-1.5.9.923 shiny-server \
     && cd shiny-server \
     && mkdir -p tmp 
 
@@ -58,7 +74,7 @@ RUN cd ~/shiny-server/tmp   \
     && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
     && make install  \
     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
-    && useradd -r -m shiny \
+    # && useradd -r -m shiny \
     && mkdir -p /var/log/shiny-server \
     && mkdir -p /srv/shiny-server \
     && mkdir -p /var/lib/shiny-server \
@@ -66,3 +82,7 @@ RUN cd ~/shiny-server/tmp   \
     && mkdir -p /etc/shiny-server \
     && cp ../config/default.config /etc/shiny-server/shiny-server.conf \
     && rm -rf /tmp/*
+
+RUN chown ${uid}:${gid} $SHINY_HOME \
+    && groupadd -g ${gid} ${group} \
+    && useradd -d "$SHINY_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
