@@ -76,6 +76,7 @@ RUN cd ~/shiny-server/tmp   \
     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
     # && useradd -r -m shiny \
     && mkdir -p /var/log/shiny-server \
+    && mkdir -p /var/log/supervisord \
     && mkdir -p /srv/shiny-server \
     && mkdir -p /var/lib/shiny-server \
     # && chown shiny /var/log/shiny-server \
