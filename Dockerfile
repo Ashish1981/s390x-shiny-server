@@ -174,7 +174,7 @@ RUN . /home/shiny/.profile \
 #     && cd shiny-server \
 #     && mkdir -p tmp 
 
-COPY install-node.sh /home/root/shiny-server/external/node/
+COPY install-node.sh /home/shiny/shiny-server/external/node/
 
 RUN cd /home/shiny \
     && git clone https://github.com/rstudio/shiny-server.git \
@@ -192,7 +192,7 @@ RUN cd /home/shiny \
 #     && make \
 #     && mkdir ../build 
 
-RUN cd ~/shiny-server/tmp \
+RUN cd /home/shiny/shiny-server/tmp \
     && (cd .. && npm install)
 
 RUN cd /home/shiny/shiny-server/tmp   \
