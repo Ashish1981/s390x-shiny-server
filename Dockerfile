@@ -177,6 +177,7 @@ RUN . /home/shiny/.profile \
 COPY install-node.sh /home/shiny/shiny-server/external/node/
 
 RUN cd /home/shiny \
+    && rm -rf shiny-server \
     && git clone https://github.com/rstudio/shiny-server.git \
     && cd shiny-server && mkdir tmp && cd tmp \
     && ../external/node/install-node.sh \
