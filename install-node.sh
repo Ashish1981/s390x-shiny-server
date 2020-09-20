@@ -4,8 +4,8 @@ set -e
 
 # Config variables.
 # See e.g. https://nodejs.org/dist/v8.10.0/SHASUMS256.txt for checksum.
-NODE_VERSION=10.15.3
-NODE_SHA256=faddbe418064baf2226c2fcbd038c3ef4ae6f936eb952a1138c7ff8cfe862438
+NODE_VERSION=14.11.0
+NODE_SHA256=615b78188b615cf19b7ecf4b9514035b112adaeef4b592e29e99a5bca40264f7
 
 cd $(dirname $0)
 cd ../..
@@ -31,8 +31,8 @@ verify_checksum () {
 }
 
 download_node () {
-  local NODE_FILENAME="node-v${NODE_VERSION}-linux-x64.tar.xz"
-  local NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/${NODE_FILENAME}"
+  local NODE_FILENAME="node-${NODE_VERSION}-linux-x64.tar.xz"
+  local NODE_URL="https://github.com/jcheng5/node-centos6/releases/download/${NODE_VERSION}/${NODE_FILENAME}"
   local NODE_ARCHIVE_DEST="/tmp/${NODE_FILENAME}"
   echo "Downloading Node v${NODE_VERSION} from ${NODE_URL}"
 
@@ -51,6 +51,8 @@ download_node () {
   rm "${NODE_ARCHIVE_DEST}"
   cp /usr/bin/node ext/node/bin/node
   cp ext/node/bin/node ext/node/bin/shiny-server
+  cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
+  cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node ~/shiny-server/ext/node/bin/
   # rm ext/node/bin/npm
   (cd ext/node/lib/node_modules/npm && ./scripts/relocate.sh)
 }
