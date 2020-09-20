@@ -93,9 +93,11 @@ RUN set -ex; \
     \) -exec rm -rf '{}' +; \
     rm -f get-pip.py
 
-    
 
-RUN apt-get install -y make gcc g++ git python libssl-dev 
+
+# RUN apt-get install -y make gcc g++ git python libssl-dev 
+
+RUN apt-get install -y make gcc g++ git libssl-dev 
 
 # # Install R repo
 
