@@ -199,6 +199,7 @@ RUN cd /home/shiny \
 COPY install-node.sh /home/shiny/shiny-server/external/node/
 
 RUN cd /home/shiny/shiny-server && mkdir tmp && cd tmp \
+    && chmod +x ../external/node/install-node.sh \
     && ../external/node/install-node.sh \
     && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
