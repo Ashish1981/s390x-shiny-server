@@ -51,11 +51,44 @@ download_node () {
   rm "${NODE_ARCHIVE_DEST}"
   # cp /usr/bin/node ext/node/bin/node
   # cp ext/node/bin/node ext/node/bin/shiny-server
-  cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
-  cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node /home/shiny/shiny-server/ext/node/bin/
-  # rm ext/node/bin/npm
+  cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/node
+  cp ext/node/bin/node ext/node/bin/shiny-server
+  # cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
+  
+  rm ext/node/bin/npm
   (cd ext/node/lib/node_modules/npm && ./scripts/relocate.sh)
 }
+install_shiny(){
+  cd shiny-server/tmp
+  # mkdir tmp
+  # cd tmp
 
+# Add the bin directory to the path so we can reference node
+DIR=`pwd`
+PATH=$DIR/../bin:$PATH
+
+# Use cmake to prepare the make step. Modify the "--DCMAKE_INSTALL_PREFIX"
+# if you wish the install the software at a different location.
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../
+# Get an error here? Check the "How do I set the cmake Python version?" question below
+
+# Recompile the npm modules included in the project
+make
+mkdir ../build
+(cd .. && npm install)
+(cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild)
+
+# Install the software at the predefined location
+sudo make install
+ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server
+mkdir -p /var/log/shiny-server
+mkdir -p /var/log/supervisord
+mkdir -p /srv/shiny-server
+mkdir -p /var/lib/shiny-server
+mkdir -p /etc/shiny-server
+cp ../config/default.config /etc/shiny-server/shiny-server.conf
+rm -rf /tmp/*
+} 
 check_node_needed
 download_node
+install_shiny

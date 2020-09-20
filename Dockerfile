@@ -200,24 +200,18 @@ COPY install-node.sh /home/shiny/shiny-server/external/node/
 
 RUN cd /home/shiny/shiny-server && mkdir tmp && cd tmp \
     && chmod +x ../external/node/install-node.sh \
-    && ../external/node/install-node.sh \
-    && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
-    && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
-    && make \
-    && mkdir ../build \
-    && cd /home/shiny/shiny-server/tmp \
-    && (cd .. && npm install)
-
-RUN cd /home/shiny/shiny-server/tmp   \
-    && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
-    && make install  \
-    && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
-    # && useradd -r -m shiny \
-    && mkdir -p /var/log/shiny-server \
-    && mkdir -p /var/log/supervisord \
-    && mkdir -p /srv/shiny-server \
-    && mkdir -p /var/lib/shiny-server \
-    # && chown shiny /var/log/shiny-server \
-    && mkdir -p /etc/shiny-server \
-    && cp ../config/default.config /etc/shiny-server/shiny-server.conf \
-    && rm -rf /tmp/*
+    && ../external/node/install-node.sh
+    
+# RUN cd /home/shiny/shiny-server/tmp   \
+#     && (cd .. && node ./ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js rebuild) \
+#     && make install  \
+#     && ln -s /usr/local/shiny-server/bin/shiny-server /usr/bin/shiny-server \
+#     # && useradd -r -m shiny \
+#     && mkdir -p /var/log/shiny-server \
+#     && mkdir -p /var/log/supervisord \
+#     && mkdir -p /srv/shiny-server \
+#     && mkdir -p /var/lib/shiny-server \
+#     # && chown shiny /var/log/shiny-server \
+#     && mkdir -p /etc/shiny-server \
+#     && cp ../config/default.config /etc/shiny-server/shiny-server.conf \
+#     && rm -rf /tmp/*
