@@ -59,7 +59,7 @@ download_node () {
   (cd ext/node/lib/node_modules/npm && ./scripts/relocate.sh)
 }
 install_shiny(){
-  cd shiny-server/tmp
+  cd ~/shiny-server/tmp
   # mkdir tmp
   # cd tmp
 
