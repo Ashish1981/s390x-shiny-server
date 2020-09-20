@@ -124,8 +124,9 @@ RUN curl -OL https://nodejs.org/dist/latest-v14.x/node-v14.11.0-linux-s390x.tar.
     && apt-get install -y npm \
     && apt-get install -y node-gyp \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash \
-    &&  echo "export DISTRO=linux-s390x \n\ export VERSION=v14.11.0" >> /home/shiny/.profile \
-    && echo "export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH"   >> /home/shiny/.profile \
+    && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
+    && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
+    && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
     && . /home/shiny/.profile
 
 # RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
