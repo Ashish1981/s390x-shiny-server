@@ -4,12 +4,12 @@ set -e
 
 # Config variables.
 # See e.g. https://nodejs.org/dist/v8.10.0/SHASUMS256.txt for checksum.
-NODE_VERSION=14.11.0
+NODE_VERSION=v14.11.0
 NODE_SHA256=615b78188b615cf19b7ecf4b9514035b112adaeef4b592e29e99a5bca40264f7
 
 cd $(dirname $0)
 cd ../..
-
+  
 check_node_needed () {
   if [ -x ext/node/bin/node ]
   then
@@ -49,8 +49,8 @@ download_node () {
 
   # Clean up temp file
   rm "${NODE_ARCHIVE_DEST}"
-  cp /usr/bin/node ext/node/bin/node
-  cp ext/node/bin/node ext/node/bin/shiny-server
+  # cp /usr/bin/node ext/node/bin/node
+  # cp ext/node/bin/node ext/node/bin/shiny-server
   cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
   cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node /home/shiny/shiny-server/ext/node/bin/
   # rm ext/node/bin/npm
