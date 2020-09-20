@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -OL https://nodejs.org/dist/latest-v14.x/node-$VERSION-$DISTRO.tar.xz \
     && mkdir -p /opt/nodejs \
     && tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /opt/nodejs \
-    && export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH \
+    # && export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH \
     # && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
     # && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
     # && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
@@ -184,17 +184,11 @@ RUN rm -rf /tmp/* \
 #     && cd shiny-server \
 #     && mkdir -p tmp 
 
-COPY install-node.sh /home/shiny/shiny-server/external/node/
+# COPY install-node.sh /home/shiny/shiny-server/external/node/
 
 RUN cd /home/shiny \
-    && rm -rf shiny-server \
-    && git clone https://github.com/rstudio/shiny-server.git \
-    && cd shiny-server && mkdir tmp && cd tmp \
-    && ../external/node/install-node.sh \
-    && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
-    && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
-    && make \
-    && mkdir ../build 
+    && git clone https://github.com/rstudio/shiny-server.git 
+    
 
 # RUN cd ~/shiny-server/tmp   \
 #     && ../external/node/install-node.sh \
@@ -202,8 +196,15 @@ RUN cd /home/shiny \
 #     && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
 #     && make \
 #     && mkdir ../build 
+COPY install-node.sh /home/shiny/shiny-server/external/node/
 
-RUN cd /home/shiny/shiny-server/tmp \
+RUN cd /home/shiny/shiny-server && mkdir tmp && cd tmp \
+    && ../external/node/install-node.sh \
+    && export DIR=`pwd` && export PATH=$DIR/../bin:$PATH \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr/local ../ \
+    && make \
+    && mkdir ../build \
+    && cd /home/shiny/shiny-server/tmp \
     && (cd .. && npm install)
 
 RUN cd /home/shiny/shiny-server/tmp   \
