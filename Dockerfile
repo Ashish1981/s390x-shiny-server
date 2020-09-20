@@ -5,7 +5,17 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ################################################################################################
 # ensure local python is preferred over distribution python
-ENV PATH /usr/local/bin:$PATH
+
+ARG DISTRO=linux-s390x
+ARG VERSION=v14.11.0
+ARG HOME=/home/shiny
+
+ENV DISTRO ${DISTRO}
+ENV VERSION ${VERSION}
+ENV HOME ${HOME}
+ENV PATH /usr/local/bin:/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH
+ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
+ENV PYTHON_VERSION 3.8.5
 
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
@@ -18,24 +28,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     uuid-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN export VERSION=v14.11.0 \
-    && export DISTRO=linux-s390x \
-    && export HOME=/home/shiny \
-    && curl -OL https://nodejs.org/dist/latest-v14.x/node-$VERSION-$DISTRO.tar.xz \
+RUN curl -OL https://nodejs.org/dist/latest-v14.x/node-$VERSION-$DISTRO.tar.xz \
     && mkdir -p /opt/nodejs \
     && tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /opt/nodejs \
     && export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH \
-    && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
-    && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
-    && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
-    && . /home/shiny/.profile \
+    # && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
+    # && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
+    # && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
+    # && . /home/shiny/.profile \
     # && apt-get install -y npm \
     # && apt-get install -y node-gyp \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
-    
+#### made changes as .~/ to /home/shiny/
+RUN mkdir /home/shiny/.npm-global \
+    && npm config set prefix '/home/shiny/.npm-global' \
+    && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
+    # && . /home/shiny/.profile \
+    && npm completion >> /home/shiny/.bashrc \
+    && npm install -g npm     
 
-ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.8.5
+################################################
+#################### PYTHON ####################
+################################################
 
 RUN set -ex \
     \
@@ -109,6 +123,9 @@ RUN set -ex; \
     \) -exec rm -rf '{}' +; \
     rm -f get-pip.py
 
+################################################
+#################### PYTHON END ################
+################################################
 
 
 # RUN apt-get install -y make gcc g++ git python libssl-dev 
@@ -152,14 +169,7 @@ RUN rm -rf /tmp/* \
 #     && apt-get install -y node-gyp \
 #     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
 ####
-#### made changes as .~/ to /home/shiny/
-RUN . /home/shiny/.profile \
-    && mkdir /home/shiny/.npm-global \
-    && npm config set prefix '/home/shiny/.npm-global' \
-    && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
-    && . /home/shiny/.profile \
-    && npm completion >> /home/shiny/.bashrc \
-    && npm install -g npm 
+
 
 # RUN cd ~/ \
 #     && wget https://github.com/rstudio/shiny-server/archive/v1.5.12.933.tar.gz \
