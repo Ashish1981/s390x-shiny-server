@@ -52,7 +52,7 @@ download_node () {
   cp /usr/bin/node ext/node/bin/node
   cp ext/node/bin/node ext/node/bin/shiny-server
   cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
-  cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node ~/shiny-server/ext/node/bin/
+  cp /opt/nodejs/node-v${NODE_VERSION}-linux-s390x/bin/node /home/shiny/shiny-server/ext/node/bin/
   # rm ext/node/bin/npm
   (cd ext/node/lib/node_modules/npm && ./scripts/relocate.sh)
 }
