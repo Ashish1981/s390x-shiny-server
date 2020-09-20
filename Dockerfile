@@ -13,7 +13,7 @@ ARG HOME=/home/shiny
 ENV DISTRO ${DISTRO}
 ENV VERSION ${VERSION}
 ENV HOME ${HOME}
-ENV PATH /usr/local/bin:/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH
+ENV PATH /usr/local/bin:/opt/nodejs/node-$VERSION-$DISTRO/bin:/home/shiny/.npm-global:$PATH
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
 ENV PYTHON_VERSION 3.8.5
 
