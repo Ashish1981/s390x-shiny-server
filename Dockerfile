@@ -28,7 +28,7 @@ RUN export VERSION=v14.11.0 \
     && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
     && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
     && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
-    && . /home/shiny/.profile \
+    # && . /home/shiny/.profile \
     && apt-get install -y npm \
     && apt-get install -y node-gyp \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
