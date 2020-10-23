@@ -52,7 +52,7 @@ download_node () {
   rm "${NODE_ARCHIVE_DEST}"
   # cp /usr/bin/node ext/node/bin/node
   # cp ext/node/bin/node ext/node/bin/shiny-server
-  cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/node
+  cp /usr/local/bin/node ext/node/bin/node
   cp ext/node/bin/node ext/node/bin/shiny-server
   # cp /opt/nodejs/node-${NODE_VERSION}-linux-s390x/bin/node ext/node/bin/shiny-server
   
