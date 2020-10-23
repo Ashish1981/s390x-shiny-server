@@ -9,8 +9,8 @@ NODE_SHA256=615b78188b615cf19b7ecf4b9514035b112adaeef4b592e29e99a5bca40264f7
 
 cd $(dirname $0)
 cd ../..
-NODE_VERSION=${cat .nvmrc} 
- 
+NODE_VERSION=$(cat .nvmrc)
+
 check_node_needed () {
   if [ -x ext/node/bin/node ]
   then
