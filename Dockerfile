@@ -4,7 +4,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ################################################
 #################  Shiny Server   ##############
 ################################################
-
 RUN cd /home/shiny \
     # && git clone https://github.com/rstudio/shiny-server.git 
     && git clone https://github.com/Ashish1981/shiny-server.git 
