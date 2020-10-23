@@ -221,24 +221,36 @@ RUN set -ex \
 ################# Node JS End     ##############
 ################################################
 
+################################################
+#################    CMAKE        ##############
+################################################
+
 RUN apt-get install -y make gcc g++ git libssl-dev 
 
 RUN rm -rf /tmp/* \
     && cd /tmp    \
-    && wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz \
-    && tar xzf cmake-2.8.11.2.tar.gz \
-    && cd cmake-2.8.11.2 \
+    # && wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz \
+    # && tar xzf cmake-2.8.11.2.tar.gz \
+    # && cd cmake-2.8.11.2 \
+    && wget http://www.cmake.org/files/v3.17/cmake-3.17.0.tar.gz \
+    && tar xzf cmake-3.17.0.tar.gz \
+    && cd cmake-3.17.0 \
     && ./configure  \
     && make \
     && make install  \
     && rm -rf /tmp/*
 
-RUN cd /home/shiny \
-    && git clone https://github.com/rstudio/shiny-server.git 
+
+################################################
+#################  Shiny Server   ##############
+################################################
+
+# RUN cd /home/shiny \
+#     && git clone https://github.com/rstudio/shiny-server.git 
     
 
-COPY install-node.sh /home/shiny/shiny-server/external/node/
+# COPY install-node.sh /home/shiny/shiny-server/external/node/
 
-RUN cd /home/shiny/shiny-server && mkdir tmp && cd tmp \
-    && chmod +x ../external/node/install-node.sh \
-    && ../external/node/install-node.sh
+# RUN cd /home/shiny/shiny-server && mkdir tmp && cd tmp \
+#     && chmod +x ../external/node/install-node.sh \
+#     && ../external/node/install-node.sh
