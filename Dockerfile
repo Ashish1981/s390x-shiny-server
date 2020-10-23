@@ -200,12 +200,12 @@ RUN set -ex \
 #     # && apt-get install -y node-gyp \
 #     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
 #### made changes as .~/ to /home/shiny/
-RUN mkdir /home/shiny/.npm-global \
-    && npm config set prefix '/home/shiny/.npm-global' \
-    && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
-    # && . /home/shiny/.profile \
-    && npm completion >> /home/shiny/.bashrc \
-    && npm install -g npm     
+# RUN mkdir /home/shiny/.npm-global \
+#     && npm config set prefix '/home/shiny/.npm-global' \
+#     && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
+#     # && . /home/shiny/.profile \
+#     && npm completion >> /home/shiny/.bashrc \
+#     && npm install -g npm     
 
 
 
