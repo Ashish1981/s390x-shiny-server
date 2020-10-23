@@ -14,8 +14,8 @@ ENV DISTRO ${DISTRO}
 ENV VERSION ${VERSION}
 ENV HOME ${HOME}
 ENV PATH /usr/local/bin:/opt/nodejs/node-$VERSION-$DISTRO/bin:/home/shiny/.npm-global:$PATH
-ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.8.5
+# ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
+# ENV PYTHON_VERSION 3.8.5
 
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
@@ -28,28 +28,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     uuid-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -OL https://nodejs.org/dist/latest-v14.x/node-$VERSION-$DISTRO.tar.xz \
-    && mkdir -p /opt/nodejs \
-    && tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /opt/nodejs \
-    # && export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH \
-    # && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
-    # && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
-    # && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
-    # && . /home/shiny/.profile \
-    # && apt-get install -y npm \
-    # && apt-get install -y node-gyp \
-    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
-#### made changes as .~/ to /home/shiny/
-RUN mkdir /home/shiny/.npm-global \
-    && npm config set prefix '/home/shiny/.npm-global' \
-    && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
-    # && . /home/shiny/.profile \
-    && npm completion >> /home/shiny/.bashrc \
-    && npm install -g npm     
-
 ################################################
 #################### PYTHON ####################
 ################################################
+ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
+ENV PYTHON_VERSION 3.9.0
 
 RUN set -ex \
     \
@@ -83,7 +66,6 @@ RUN set -ex \
     \( \
     \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
     -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name '*.a' \) \) \
-    -o \( -type f -a -name 'wininst-*.exe' \) \
     \) -exec rm -rf '{}' + \
     \
     && ldconfig \
@@ -98,10 +80,10 @@ RUN cd /usr/local/bin \
     && ln -s python3-config python-config
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 20.2.3
+ENV PYTHON_PIP_VERSION 20.2.4
 # https://github.com/pypa/get-pip
-ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/fa7dc83944936bf09a0e4cb5d5ec852c0d256599/get-pip.py
-ENV PYTHON_GET_PIP_SHA256 6e0bb0a2c2533361d7f297ed547237caf1b7507f197835974c0dd7eba998c53c
+ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/8283828b8fd6f1783daf55a765384e6d8d2c5014/get-pip.py
+ENV PYTHON_GET_PIP_SHA256 2250ab0a7e70f6fd22b955493f7f5cf1ea53e70b584a84a32573644a045b4bfb
 
 RUN set -ex; \
     \
@@ -126,6 +108,119 @@ RUN set -ex; \
 ################################################
 #################### PYTHON END ################
 ################################################
+
+################################################
+################# Node JS Start   ##############
+################################################
+
+ENV NODE_VERSION 15.0.0
+
+RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+    && case "${dpkgArch##*-}" in \
+    amd64) ARCH='x64';; \
+    ppc64el) ARCH='ppc64le';; \
+    s390x) ARCH='s390x';; \
+    arm64) ARCH='arm64';; \
+    armhf) ARCH='armv7l';; \
+    i386) ARCH='x86';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+    esac \
+    # gpg keys listed at https://github.com/nodejs/node#release-keys
+    && set -ex \
+    && for key in \
+    4ED778F539E3634C779C87C6D7062848A1AB005C \
+    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+    1C050899334244A8AF75E53792EF661D867B9DFA \
+    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+    C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
+    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+    A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+    108F52B48DB57BB0CC439B2997B01419BD92F80A \
+    B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+    ; do \
+    gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+    done \
+    && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+    && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+    && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+    # smoke tests
+    && node --version \
+    && npm --version
+
+ENV YARN_VERSION 1.22.5
+
+RUN set -ex \
+    && for key in \
+    6A010C5166006599AA17F08146C2130DFD2497F5 \
+    ; do \
+    gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+    done \
+    && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+    && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+    && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+    && mkdir -p /opt \
+    && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
+    && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+    && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+    # smoke test
+    && yarn --version
+
+
+
+
+
+
+
+
+
+
+
+
+
+# RUN curl -OL https://nodejs.org/dist/latest-v14.x/node-$VERSION-$DISTRO.tar.xz \
+#     && mkdir -p /opt/nodejs \
+#     && tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /opt/nodejs \
+#     # && export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH \
+#     # && echo 'export DISTRO=linux-s390x' >> /home/shiny/.profile \
+#     # && echo 'export VERSION=v14.11.0' >> /home/shiny/.profile \
+#     # && echo 'export PATH=/opt/nodejs/node-$VERSION-$DISTRO/bin:$PATH'   >> /home/shiny/.profile \
+#     # && . /home/shiny/.profile \
+#     # && apt-get install -y npm \
+#     # && apt-get install -y node-gyp \
+#     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.1/install.sh | bash 
+#### made changes as .~/ to /home/shiny/
+RUN mkdir /home/shiny/.npm-global \
+    && npm config set prefix '/home/shiny/.npm-global' \
+    && echo 'export PATH=/home/shiny/.npm-global:$PATH' >> /home/shiny/.profile \
+    # && . /home/shiny/.profile \
+    && npm completion >> /home/shiny/.bashrc \
+    && npm install -g npm     
+
+
+
+
+
+
+
+
+
+
+
+################################################
+################# Node JS End     ##############
+################################################
+
 RUN apt-get install -y make gcc g++ git libssl-dev 
 
 RUN rm -rf /tmp/* \
